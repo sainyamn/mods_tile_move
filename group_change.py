@@ -109,10 +109,10 @@ class GroupChange:
                         #print("\nThe new parameters for the device are:")
                         #entry.item.show_info()
                         #display_changes(entry)
-                        df_initial=pd.DataFrame.from_dict(inital_values, orient='index', columns=['Current Value'])
+                        df_initial=pd.DataFrame.from_dict(inital_values, orient='index', columns=['Old Value'])
                         df_initial.index.name='Device parameter'
 
-                        df_final=pd.DataFrame.from_dict(final_values, orient='index', columns=['Modified Value'])
+                        df_final=pd.DataFrame.from_dict(final_values, orient='index', columns=['New Value'])
                         df_final.index.name='Device parameter'
 
                         df_compare=pd.concat([df_initial, df_final], axis=1)

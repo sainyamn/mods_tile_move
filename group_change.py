@@ -43,72 +43,53 @@ class GroupChange:
             print("No entries found for the search criteria.")
         else:
             globalFlag=0
-            confirm_ALL=input("\n Do you want to skip verification and confirm changes for all devices (Y/n)").strip().lower()
+            confirm_ALL=input("\n Do you want to skip verification and confirm changes for all devices (y/N)").strip().lower()
+            # set flag=1 if we want to skip verification for all devices
             if confirm_ALL == 'y':
                 globalFlag=1
 
             for entry in entries_to_modify:
                 inital_values={}
                 final_values={}
+                #some device may miss fields hence the use of if statements below
                 try:
-                        #print(f"{entry}")
-                        #print(f"{entry.metadata['name']}")
-                        #print(len(entry))
-                        #display_changes(entry)
-                        #print("\nInitial State: ")
-                        #entry.item.show_info()
                         if 'ioc_alias' in entry: 
                             old_ioc_alias=entry.item.ioc_alias
                             inital_values['ioc_alias']=old_ioc_alias
-                            #print(old_ioc_alias)
                             new_ioc_alias=old_ioc_alias.replace(loc_code.upper(), new_name.upper())
                             entry.item.ioc_alias=new_ioc_alias
                             final_values['ioc_alias']=entry.item.ioc_alias
-                            #print("Initial State".ljust(20), "Final State".ljust(20))
-                            #print(f"IOC Alias: {old_ioc_alias}".ljust(20), f"IOC Alias: {new_ioc_alias}")
-                            #print(entry.item.ioc_alias)
                         if 'ioc_base' in entry: 
                             old_ioc_base=entry.item.ioc_base
-                            #print(old_ioc_base)
                             inital_values['ioc_base']=old_ioc_base
                             new_ioc_base=old_ioc_base.replace(loc_code.upper(), new_name.upper())
                             entry.item.ioc_base=new_ioc_base
                             final_values['ioc_base']=entry.item.ioc_base
-                            #print(entry.item.ioc_base)
                         if 'prefix' in entry: 
                             old_prefix=entry.item.prefix
-                            #print(old_prefix)
                             inital_values['prefix']=old_prefix
                             new_prefix=old_prefix.replace(loc_code.upper(), new_name.upper())
                             entry.item.prefix=new_prefix
                             final_values['prefix']=entry.item.prefix
-                            #print(entry.item.prefix)
                         if 'ioc_name' in entry: 
                             old_ioc_name=entry.item.ioc_name
                             inital_values['ioc_name']=old_ioc_name
                             new_ioc_name=old_ioc_name.replace(loc_code.lower(), new_name.lower())
                             entry.item.ioc_name=new_ioc_name
                             final_values['ioc_name']=entry.item.ioc_name
-                            #print(entry.item.ioc_name)
                         if 'location_group' in entry: 
                             old_location_grp=entry.item.location_group
                             inital_values['location_group']=old_location_grp
                             new_loc_grp=old_location_grp.replace(loc_code.lower(), new_name.lower())
                             entry.item.location_group=new_loc_grp
                             final_values['location_group']=entry.item.location_group
-                            #print(entry.item.location_group)
                         if 'name' in entry: 
                             old_name=entry.item.name
                             inital_values['name']=old_name
                             final_name=old_name.replace(loc_code.lower(), new_name.lower())
                             entry.item.name=final_name
                             final_values['name']=entry.item.name
-                            #print(entry.item.name)
                         
-                        #entry.item.save()
-                        #print("\nThe new parameters for the device are:")
-                        #entry.item.show_info()
-                        #display_changes(entry)
                         df_initial=pd.DataFrame.from_dict(inital_values, orient='index', columns=['Old Value'])
                         df_initial.index.name='Device parameter'
 
@@ -117,22 +98,17 @@ class GroupChange:
 
                         df_compare=pd.concat([df_initial, df_final], axis=1)
                         print(df_compare)
-
-                        '''
-                        if validator.get_boolean_input():
-                            entry.item.save()
-                            print(f"Location successfully changed for {entry.item.name}")
-                            display_changes(entry)
-                        '''
+                        #changes are displayed in a dataframe for easy comparision with previous values
                         if globalFlag == 1:
                             entry.item.save()
                             continue
                         if  globalFlag == 0:
-                            confirmation = input("Confirm changes (Y/n): ").strip().lower()
+                            confirmation = input("Confirm changes (y/N): ").strip().lower()
+                            
                             if confirmation == 'y':
                                 entry.item.save()
                                 print(f"Location successfully changed for {entry.item.name}")
-                                entry.item.show_info()
+                                #entry.item.show_info()
                             else:
                                 if 'ioc_alias' in entry: entry.item.ioc_alias=old_ioc_alias
                                 if 'ioc_base' in entry: entry.item.ioc_base=old_ioc_base
@@ -147,7 +123,7 @@ class GroupChange:
 
                 except DuplicateError as e:
                     print(f"An entry with the same name already exists: {e}")
-                #print("Modification complete. Entries updated in the database.")
+                
     def main(self, loc_grp, new_name):
         if not loc_grp or not new_name:
                 print("Please provide both location group (--loc_grp) and new name (--new_name)")
@@ -158,7 +134,7 @@ class GroupChange:
 if __name__ == "__main__":
         parser = argparse.ArgumentParser()
         parser.add_argument("--loc_grp", help="location group for devices to be shifted")
-        parser.add_argument("--new_name", help="destination code for the devices after shifting")
+        parser.add_argument("--new_name", help="destination location code for the devices after shifting")
 
         args = parser.parse_args()
         loc_grp = args.loc_grp

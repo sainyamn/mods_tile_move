@@ -1,3 +1,4 @@
+#!/cds/group/pcds/pyps/conda/py39/envs/pcds-5.8.1/bin/python3
 import argparse
 
 from happi import Client
@@ -115,13 +116,17 @@ class GroupChange:
 
         
 if __name__ == "__main__":
+        #conda_activate_cmd="source pcds_conda"
+        #subprocess.run(conda_activate_cmd, shell=True, executable="/bin/sh")
+
         parser = argparse.ArgumentParser()
-        parser.add_argument("--loc_grp", help="location group for devices to be shifted")
-        parser.add_argument("--new_name", help="destination location code for the devices after shifting")
+        parser.add_argument("--i", help="intial location group for devices to be shifted")
+        parser.add_argument("--f", help="final destination location code for the devices after shifting")
 
         args = parser.parse_args()
-        loc_grp = args.loc_grp
-        new_name = args.new_name
+        loc_grp = args.i
+        new_name = args.f
 
         group_change = GroupChange('/reg/g/pcds/epics-dev/nagar123/mods/db.json')
         group_change.main(loc_grp, new_name)
+        #conda_env_path = "/cds/group/pcds/pyps/conda/py39/envs/pcds-5.8.1"

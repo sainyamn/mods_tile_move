@@ -1,0 +1,3 @@
+#!/bin/bash
+source pcds_conda
+$0.py "$@"
